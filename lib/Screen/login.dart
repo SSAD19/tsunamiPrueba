@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tsunami_stef/Models/models.dart';
 import 'package:tsunami_stef/Providers/provider.dart';
 import 'package:tsunami_stef/Services/services.dart';
 import 'package:tsunami_stef/Theme/themelight.dart';
@@ -52,6 +53,7 @@ class _CardContainer extends StatelessWidget {
 
     final loginProv = Provider.of<LoginProvider>(context);
     final authProv = Provider.of<AuthServices>(context);
+  
 
     return  Container(
       padding: const EdgeInsets.symmetric( horizontal: 30 ),
@@ -87,33 +89,44 @@ class _CardContainer extends StatelessWidget {
               String? error = await  authProv.registrarUser(loginProv.correo!, loginProv.password!); 
        
             if ( error == null ) {
-                  //TODO: cargar textos y asignar cual es el user ??
-                  Navigator.pushReplacementNamed(context, 'home');
+                  
+                  Usuario newUser =  Usuario(alias: loginProv.alias! , correo:loginProv.correo!, activo: true, idUser: 0); 
+                  
+                  final userProv = Provider.of<UsersServices>(context, listen: false);
+
+                  bool alta = await userProv.altaUsuario(newUser); 
+
+                  alta 
+                  ?  Navigator.pushReplacementNamed(context, 'home')
+                  :  ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Error al generar el alta del usuario')),        
+                     );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(error)),        
                   );
                 }
            }
-
           
           },
-          child: Text('registrarse'),)
+          child: const Text('Registrarse'),)
           :MaterialButton(onPressed: () async {
-            if(!loginProv.validarForm()) return print('Error en validaciones'); 
+            if(!loginProv.validarForm()) 
+            { 
+               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Alguno de los datos es incorrecto, por favor, revise.')),);
+              return; 
+           } 
           
             String? error = await  authProv.iniciarSesion(loginProv.correo!, loginProv.password!); 
        
             if ( error == null ) {
                   //TODO: cargar textos y asignar cual es el user ??
                   Navigator.pushReplacementNamed(context, 'home');
-                } else {
-                  //TODO: MOSTRAR ERROR
-                  print( error );
-                }
-
-          },
-          child: Text('ingresar'),), 
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('No se puede ingresar. $error')));   
+          }}, 
+          child: const Text('Ingresar'),), 
         ],
 
       ),
@@ -188,14 +201,20 @@ class _FormReg extends StatelessWidget {
       child: Column(
         children: [
           //alias
-             TextFormField(
+          TextFormField(
           controller: loginProv.aliasCtrl,
           decoration: ThemeCustomLight.inputField(Icons.person_2_outlined, 'Alias-19','Alias'),
-          obscureText: true,
           onChanged: (value) => loginProv.alias=value, 
           validator: (value) {
-             //TODO; ALIAS NO REPETIDO Y QUE NO TENGA ESPACIOS
-            value!.length > 3 ? null : 'El alias proporcionado es muy corto';
+          
+          final userProv = Provider.of<UsersServices>(context, listen: false);
+          if (userProv.allUsers.any((user) => user.alias == value)) {
+                return 'El alias ya está en uso';
+          }
+
+          RegExp regExp  = RegExp(r'^[a-zA-Z0-9._-]+$');
+
+          return (regExp.hasMatch(value!) || value.length > 3) ? null  : 'Alias incorrecto';
 
           },),
           //correo
@@ -205,8 +224,7 @@ class _FormReg extends StatelessWidget {
            keyboardType: TextInputType.emailAddress,
            onChanged: (value) =>  loginProv.correo=value,  
            validator: (value) {   
-           String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-           RegExp regExp  = RegExp(pattern);
+           RegExp regExp  = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
            return regExp.hasMatch(value ?? '')  ? null  : 'Correo incorrecto';
          },
     

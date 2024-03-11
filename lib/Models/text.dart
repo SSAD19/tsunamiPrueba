@@ -3,14 +3,14 @@ import 'package:tsunami_stef/Models/models.dart';
 
 class Textos {
   
- late int idTexto; 
- final int idUser; 
- late Usuario? user; 
+ int idTexto; 
+ int idUser; 
+ Usuario? user; 
  // asignar el usuario en lògica interfaz
- final String texto; 
+ String texto; 
  int contador;
  String? name;
- late bool userAct; 
+ bool? userAct; 
 
 
   Textos({

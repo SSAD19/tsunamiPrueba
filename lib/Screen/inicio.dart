@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:tsunami_stef/Providers/provider.dart';
 import 'package:tsunami_stef/Services/auth_services.dart';
+import 'package:tsunami_stef/Services/services.dart';
 import 'package:tsunami_stef/widgets/widgets.dart';
 
 class Inicio extends StatefulWidget {
@@ -19,8 +20,9 @@ class _InicioState extends State<Inicio> {
     super.initState();
     navegar();
   }
-  
+
   Future<void> navegar() async  {
+
       print('entrando al delay'); 
       final authToken = Provider.of<AuthServices>(context, listen: false);
 
@@ -35,7 +37,11 @@ class _InicioState extends State<Inicio> {
 
   @override
   Widget build(BuildContext context) {
-        
+
+    final userProv = Provider.of<UsersServices>(context); 
+    
+    userProv.traerUsuarios(); 
+    
      return const Scaffold(
       body: LoadWave()); 
 

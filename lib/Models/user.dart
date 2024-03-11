@@ -2,18 +2,19 @@ import 'dart:convert';
 
 class Usuario{
 
- final bool activo;
- final String alias;
- final int idUser;
- final String correo;
+ bool activo;
+ String alias;
+ int idUser;
+ String correo;
  late String name; 
+ bool? userLog; 
 
 //solo me interesa alias, id y que este activo para los textos
 
 Usuario({
   required this.activo,
   required this.alias,
-  required this.idUser,
+  required  this.idUser,
   required this.correo, 
 });
 
