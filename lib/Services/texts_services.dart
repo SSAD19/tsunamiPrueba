@@ -1,19 +1,23 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:tsunami_stef/Models/models.dart';
+import 'package:tsunami_stef/Models/models.dart';
 
-class TextServices with ChangeNotifier {
+class TextsServices with ChangeNotifier {
+
+//TODO: REHACER LOGICA Y PETICIONES DE TEXTOS
+
 
   final String _baseUrl = 'tsunami-app-41226-default-rtdb.firebaseio.com';
 
-  List<Textos> textos =[]; 
+  List<Texts> textos =[]; 
   List<Usuario> usuarios =[]; 
  
 
-  TextServices(); 
+  TextsServices(); 
+
+  //revisar
 
 Future recuperarTodos (int id) async {
       await traerTextos(id); 
@@ -36,7 +40,7 @@ Future<void> traerTextos (int id)  async {
     final textsMapeo = json.decode(texts.body); 
     textsMapeo.forEach((key, value) { 
       
-      final textMap = Textos.fromJson(value);
+      final textMap = Texts.fromJson(value);
         textMap.name = key; 
         textMap.idUser != id
         ? textMap.userAct= false
@@ -64,7 +68,7 @@ print('entrando en ciclo alias');
 }
 
  
-Future<void> enviarTexto(Textos texto) async {
+Future<void> enviarTexto(Texts texto) async {
 
     final url = Uri.https(_baseUrl, 'Textos.json');
     try {
@@ -119,7 +123,7 @@ Future<void> borrarTexto (String name, int id) async {
 // put para actualizar contador  
 
 
-Future<void> masUnoCont (Textos texto) async{
+Future<void> masUnoCont (Texts texto) async{
     
     texto.contador++; 
 
@@ -133,5 +137,5 @@ Future<void> masUnoCont (Textos texto) async{
 
     notifyListeners(); 
 }
-}
+} 
 }

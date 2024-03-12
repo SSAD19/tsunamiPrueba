@@ -9,10 +9,11 @@ class UsersServices with ChangeNotifier {
 final String _baseUrl = 'tsunami-app-41226-default-rtdb.firebaseio.com';
 
 List<Usuario> allUsers =[]; 
+Usuario? userLog; 
 
-UsersProvider(){
+UsersProvider()async {
   //rescatar mail e idUser de todos para poder buscar luego por mail el id
-traerUsuarios();
+ await traerUsuarios();
 }
 
 Future<void> traerUsuarios () async {
@@ -39,27 +40,44 @@ Future<void> traerUsuarios () async {
   }
 }
 
-void userLogeado (String correo) {
-//TODO: buscar en mi listado el que contenga el correo 
+Usuario? userLogeado (String correoUser) {
+try{
+  userLog = (allUsers.firstWhere((user) => user.correo == correoUser));
+  notifyListeners(); 
+  
+  return userLog;
+
+} catch (e) {
+
+  print('ERROR PARA ASGINAR USERlOG: $e'); 
+  return null; 
 }
-
-
-
-//put 
-//modificar usuarui (int id) 
+ 
+}
 
 //post
 //alta usuario (id) .-
 Future<bool> altaUsuario (Usuario user) async {
 
   try{
-    allUsers.isNotEmpty 
-    ? user.idUser = (allUsers.map((user) => user.idUser).reduce((a, b) => a > b ? a : b))+1
-    : user.idUser = 0; 
+    int maxId = 0;
 
+   if (allUsers.isNotEmpty ) {
+       for (int i = 0; i<allUsers.length; i++){
+       allUsers[i].idUser! > maxId ? maxId = allUsers[i].idUser! : null;   
+      }
+      user.idUser = maxId +1; 
+
+    } else {
+      user.idUser = 0; 
+    }
+   
+    
     user.activo = true; 
     final url = Uri.https(_baseUrl,'Usuarios.json'); 
     await http.post(url, body:jsonEncode(user.toJson()));
+
+    allUsers.add(user); 
 
     return true; 
 
@@ -71,6 +89,9 @@ Future<bool> altaUsuario (Usuario user) async {
 //delete ¿?
 // baja usuario : baja logica
 
+
+//put 
+//modificar usuarui (int id) 
 
   
 }

@@ -75,6 +75,7 @@ class _CardContainer extends StatelessWidget {
           : _FormLog(loginProv: loginProv),
 
           userReg
+           //REGISTRARSE  BOTON 
           ? MaterialButton(
             onPressed: () async {
 
@@ -90,17 +91,18 @@ class _CardContainer extends StatelessWidget {
        
             if ( error == null ) {
                   
-                  Usuario newUser =  Usuario(alias: loginProv.alias! , correo:loginProv.correo!, activo: true, idUser: 0); 
+                  Usuario newUser =  Usuario(alias: loginProv.alias! , correo:loginProv.correo!, activo: true); 
                   
                   final userProv = Provider.of<UsersServices>(context, listen: false);
 
                   bool alta = await userProv.altaUsuario(newUser); 
 
-                  alta 
-                  ?  Navigator.pushReplacementNamed(context, 'home')
+                  alta ? userProv.userLogeado(loginProv.correo!) : null; 
+                  alta ?  Navigator.pushReplacementNamed(context, 'home')
                   :  ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Error al generar el alta del usuario')),        
                      );
+                  
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(error)),        
@@ -110,6 +112,7 @@ class _CardContainer extends StatelessWidget {
           
           },
           child: const Text('Registrarse'),)
+          //INICIO SESION BOTON 
           :MaterialButton(onPressed: () async {
             if(!loginProv.validarForm()) 
             { 
@@ -121,6 +124,11 @@ class _CardContainer extends StatelessWidget {
        
             if ( error == null ) {
                   //TODO: cargar textos y asignar cual es el user ??
+
+                  final userProv = Provider.of<UsersServices>(context, listen: false);
+
+                  userProv.userLogeado(loginProv.correo!); 
+
                   Navigator.pushReplacementNamed(context, 'home');
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

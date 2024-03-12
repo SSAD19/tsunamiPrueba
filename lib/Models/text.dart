@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:tsunami_stef/Models/models.dart';
 
-class Textos {
+class Texts {
   
  int idTexto; 
  int idUser; 
@@ -13,36 +13,32 @@ class Textos {
  bool? userAct; 
 
 
-  Textos({
+  Texts({
     required this.idTexto, 
     required this.idUser, 
     this.user,
     required this.texto, 
     required this.contador,
-    this.name
+    this.name,
+    this.userAct
   });
 
-factory Textos.fromRawJson(String str) => Textos.fromJson(json.decode(str));
-
-String toRawJson() => json.encode(toJson());
-
-
-
-factory Textos.fromJson(Map<String, dynamic> json) => Textos(
+factory Texts.fromRawJson(String str) => Texts.fromJson(json.decode(str));
+factory Texts.fromJson(Map<String, dynamic> json) => Texts(
   idTexto: json["idTexto"],
   idUser: json["idUser"], // que recupero usuario por ID user.TraerUno(json["idUser"])
   texto: json["texto"] ?? 'texto vacío',
-  contador: json["contador"] ?? 0,
- // name: json["name"] ?? "",
+  contador: json["contador"] ?? 0
 ); 
 
-
+String toRawJson() => json.encode(toJson());
 Map<String, dynamic> toJson() => {
     "idTexto": idTexto,
     "idUser": idUser,
     "texto": texto,
     "contador": contador
 };
+
 }
 
 

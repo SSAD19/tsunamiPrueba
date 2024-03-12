@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:tsunami_stef/Providers/provider.dart';
 import 'package:tsunami_stef/Screen/screen.dart';
 import 'package:tsunami_stef/Services/services.dart';
@@ -13,7 +14,7 @@ void main() {
       ChangeNotifierProvider(create: (_) => LoginProvider()),
       ChangeNotifierProvider(create: (_) => AuthServices()),
       ChangeNotifierProvider(create: (_) => UsersServices(), lazy: false,),
-      ChangeNotifierProvider(create: (_) => TextServices()),
+      ChangeNotifierProvider(create: (_) => TextsServices()),
       //TODO: USUARIOS SE CARGUEN DE UNA PARA PODER EVALUAR ALIAS EN CASO DE NUEVO USER
     ], 
     child: const MyApp(),

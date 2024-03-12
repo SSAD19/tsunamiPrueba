@@ -4,9 +4,9 @@ class Usuario{
 
  bool activo;
  String alias;
- int idUser;
+ int? idUser;
  String correo;
- late String name; 
+ String? name; 
  bool? userLog; 
 
 //solo me interesa alias, id y que este activo para los textos
@@ -14,8 +14,10 @@ class Usuario{
 Usuario({
   required this.activo,
   required this.alias,
-  required  this.idUser,
+   this.idUser,
   required this.correo, 
+  this.userLog,
+  this.name
 });
 
    factory Usuario.fromRawJson(String str) => Usuario.fromJson(json.decode(str));

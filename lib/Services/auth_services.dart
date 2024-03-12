@@ -8,8 +8,7 @@ import 'package:http/http.dart' as http;
 
 class AuthServices with ChangeNotifier{
 
-static final storage = FlutterSecureStorage(); 
-// await storage.write(key: 'token', value: decodedResp['idToken']);
+static const storage = FlutterSecureStorage(); 
 
 Future<String> readToken() async {
 
@@ -17,10 +16,10 @@ Future<String> readToken() async {
 
   }
 
-  final authBase= 'identitytoolkit.googleapis.com'; 
-  final apiKey= 'AIzaSyDmWtDUKvaKxvBU1X56b0vTUHkcpYYBKzo'; 
+final authBase= 'identitytoolkit.googleapis.com'; 
+final apiKey= 'AIzaSyDmWtDUKvaKxvBU1X56b0vTUHkcpYYBKzo'; 
 
-  Future<String?> registrarUser(String email, String password) async{
+Future<String?> registrarUser(String email, String password) async{
 
     final Map<String, dynamic> data ={
       'email': email,
@@ -34,16 +33,29 @@ Future<String> readToken() async {
     final sendData = await http.post(url, body: jsonEncode(data)); 
     
     final Map<String, dynamic> decodedResp = json.decode(sendData.body);
+    
+    if (decodedResp.containsKey('idToken')) {
+    await storage.write(key: 'token', value: decodedResp['idToken']);
+    return null; 
+    
+     }else {
 
-    decodedResp.containsKey('idToken')
-    ? await storage.write(key: 'token', value: decodedResp['idToken'])
-    : decodedResp['error']['message']; 
+        if( decodedResp['error']['message'] == 'EMAIL_EXISTS') {
+          return 'El email ingresado ya está registrado';
+
+        } else  {
+
+             return 'Error de validación. ${decodedResp['error']['message']}';
+        }
+    
+    }
 
   }
 
-  Future<String?> iniciarSesion(String email, String password) async{
+Future<String?> iniciarSesion(String email, String password) async{
 
-    final Map<String, dynamic> data ={
+    final Map<String, dynamic> data =
+    {
       'email': email,
       'password': password,
       'returnSecureToken': true
@@ -55,13 +67,31 @@ Future<String> readToken() async {
     final sendData = await http.post(url, body: jsonEncode(data)); 
     final Map<String, dynamic> decodedResp = json.decode(sendData.body);
 
-    decodedResp.containsKey('idToken')
-    ? await storage.write(key: 'token', value: decodedResp['idToken'])
-    : decodedResp['error']['message']; 
+   if (decodedResp.containsKey('idToken')) {
+    await storage.write(key: 'token', value: decodedResp['idToken']);
+    return null; 
+
+   }else {
+
+      if( decodedResp['error']['message'] == 'EMAIL_NOT_FOUND') {
+          return 'El email ingresado no está registrado';
+
+        } else if(decodedResp['error']['message'] == 'INVALID_PASSWORD'){
+          
+          return 'Contraseña incorrecta';
+
+        } else  {
+
+             return 'Error de validación. ${decodedResp['error']['message']}';
+        }
+    
+    }
 
   }
 
-
+Future<void> logOut () async {
+     await storage.delete(key: 'token');
+  }
 
 
 
