@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:tsunami_stef/Models/models.dart';
 import 'package:tsunami_stef/Providers/provider.dart';
 import 'package:tsunami_stef/Services/services.dart';
@@ -42,7 +41,6 @@ class LoginScreen extends StatelessWidget {
     ), );
   }
 }
-
 
 class _CardContainer extends StatelessWidget {
   const _CardContainer({super.key, required this.userReg});
@@ -103,6 +101,7 @@ class _CardContainer extends StatelessWidget {
                         const SnackBar(content: Text('Error al generar el alta del usuario')),        
                      );
                   
+                  loginProv.limpiarInputs(); 
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(error)),        
@@ -120,16 +119,15 @@ class _CardContainer extends StatelessWidget {
               return; 
            } 
           
-            String? error = await  authProv.iniciarSesion(loginProv.correo!, loginProv.password!); 
+          String? error = await  authProv.iniciarSesion(loginProv.correo!, loginProv.password!); 
        
-            if ( error == null ) {
+          if ( error == null ) {
                   //TODO: cargar textos y asignar cual es el user ??
 
                   final userProv = Provider.of<UsersServices>(context, listen: false);
-
-                  userProv.userLogeado(loginProv.correo!); 
-
+                  userProv.userLogeado(loginProv.correo!);              
                   Navigator.pushReplacementNamed(context, 'home');
+                  loginProv.limpiarInputs(); 
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('No se puede ingresar. $error')));   

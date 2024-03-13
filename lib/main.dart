@@ -13,8 +13,9 @@ void main() {
       ChangeNotifierProvider(create: (_) => LoadProvider()),
       ChangeNotifierProvider(create: (_) => LoginProvider()),
       ChangeNotifierProvider(create: (_) => AuthServices()),
-      ChangeNotifierProvider(create: (_) => UsersServices(), lazy: false,),
+      ChangeNotifierProvider(create: (_) => UsersServices()),
       ChangeNotifierProvider(create: (_) => TextsServices()),
+      ChangeNotifierProvider(create: (_) => ProfileProvider(),)
       //TODO: USUARIOS SE CARGUEN DE UNA PARA PODER EVALUAR ALIAS EN CASO DE NUEVO USER
     ], 
     child: const MyApp(),

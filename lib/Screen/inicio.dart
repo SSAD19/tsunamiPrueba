@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:tsunami_stef/Providers/provider.dart';
-import 'package:tsunami_stef/Services/auth_services.dart';
 import 'package:tsunami_stef/Services/services.dart';
 import 'package:tsunami_stef/widgets/widgets.dart';
 
@@ -22,17 +20,40 @@ class _InicioState extends State<Inicio> {
   }
 
   Future<void> navegar() async  {
-
-      print('entrando al delay'); 
       final authToken = Provider.of<AuthServices>(context, listen: false);
 
-      await Future.delayed(const Duration(seconds: 7));
+      await Future.delayed(const Duration(seconds: 3));
       var token = await authToken.readToken();
-      print(token); 
-      (token == '' || token.isEmpty)
-          ? Navigator.pushReplacementNamed(context, 'login')
-          : Navigator.pushReplacementNamed(context, 'home'); 
-     }
+ 
+
+      if (token == '' || token.isEmpty) {
+
+        authToken.logOut();
+        Navigator.pushReplacementNamed(context, 'login'); 
+        
+      } else {
+        String email;
+
+        print(token); 
+
+       email = await authToken.recuperarDatos(token) ?? 'error'; 
+
+        if (email == 'invalido') {
+
+          authToken.logOut();
+           Navigator.pushReplacementNamed(context, 'login'); 
+
+        } else {
+           final userProv =  Provider.of<UsersServices>(context, listen: false); 
+
+           userProv.userLogeado(email); 
+           print(userProv.userLog?.alias ?? 'sin userLog'); 
+
+          Navigator.pushReplacementNamed(context, 'home');
+        }
+       
+      } 
+    }
  
 
   @override
