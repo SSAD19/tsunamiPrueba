@@ -7,6 +7,7 @@ import 'package:tsunami_stef/Models/models.dart';
 import 'package:tsunami_stef/Providers/provider.dart';
 import 'package:tsunami_stef/Services/services.dart';
 
+
 class PerfilPages extends StatelessWidget {
   PerfilPages({
     super.key, 
@@ -30,6 +31,7 @@ class PerfilPages extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(15),
                       child: Form(
+                        key: profileProv.claveKey,
                         child: Column(
                           children: [
                             Row(
@@ -73,6 +75,12 @@ class PerfilPages extends StatelessWidget {
                                         : profileProv.ocultarClave= true;
                                   }),
                                 ),
+                                onChanged: ((value) =>profileProv.clave =value) ,
+                                 validator: (value) {
+                                  return (value!= null && value.length>7)
+                                    ? null
+                                    : 'La clave debe tener mìnimo 8 caracteres'; 
+                                },
                             ),
 
                             //repetir contraseña:
@@ -91,13 +99,27 @@ class PerfilPages extends StatelessWidget {
                                         : profileProv.ocultarClave= true;
                                   }),
                                 ),
+                                validator: (value) {
+                                   value == profileProv.clave
+                                   ? null
+                                   :  'No coinciden las contraseñas';
+                                   }    
                             ),
-                            
-                            const SizedBox(height: 15,),
-                            TextButton(onPressed: (){
-                              // validaciones 
-                              //TODO:  PUT DE MI  USER EN AUTH
 
+                            const SizedBox(height: 15,),
+                            TextButton(onPressed: () async {
+                              // validaciones 
+                             if (!profileProv.validarForm()) return; 
+
+                             //TODO:  PUT DE MI  USER EN AUTH
+                              final authProv = Provider.of<AuthServices>(context, listen: false); 
+                              final restablecer = await authProv.restablecerContrasenia(profileProv.clave); 
+
+                              restablecer
+                              ? ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Contraseña reestablecida')))
+                              :    ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('No se pudo reestablecer la contraseña')));
                             }, 
                             child: Text('Guardar'))
                           ],

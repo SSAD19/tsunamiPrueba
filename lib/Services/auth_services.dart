@@ -129,6 +129,37 @@ Future<String?> recuperarDatos (String token) async {
 }
   
 
+Future<bool> restablecerContrasenia (String clave) async {
+
+   final token = await readToken(); 
+
+   final Map<String, dynamic> data ={
+      'idToken': token,
+      'password': clave,
+      'returnSecureToken': true
+    }; 
+
+    final url = Uri.https(authBase, 'v1/accounts:update', {
+      'key': apiKey}); 
+   
+    final sendData = await http.post(url, body: json.encode(data)); 
+    
+    final Map<String, dynamic> decodedResp = json.decode(sendData.body);
+
+
+    if (decodedResp.containsKey('idToken')) {
+
+        await storage.write(key: 'token', value: decodedResp['idToken']);
+       
+        return true; 
+        
+     }else {
+        print(decodedResp['error']['message']); 
+       
+        return false; 
+    }
+ 
+}
 }
 
 

@@ -99,6 +99,7 @@ class HomeScreen extends StatelessWidget {
                   authProv.logOut(); 
                   textProv.textos = []; 
                   Navigator.pushReplacementNamed(context, 'inicio');
+                  page.pagina = const HomePage(); 
                   
                   },
                  ),
