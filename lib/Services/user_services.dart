@@ -40,17 +40,17 @@ Future<void> traerUsuarios () async {
   }
 }
 
-Usuario? userLogeado (String correoUser) {
+bool userLogeado (String correoUser) {
 try{
   userLog = (allUsers.firstWhere((user) => user.correo == correoUser));
   notifyListeners(); 
   
-  return userLog;
+  return true;
 
 } catch (e) {
 
   print('ERROR PARA ASGINAR USERlOG: $e'); 
-  return null; 
+  return false; 
 }
  
 }

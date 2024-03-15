@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tsunami_stef/Models/models.dart';
+import 'package:tsunami_stef/Pages/pages.dart';
 
 class LoadProvider with ChangeNotifier {
 
   bool _loading = false; 
-  //getter y setter para poder aplicar notify 
   bool get loading => _loading; 
 
   set loading (bool value) {
@@ -11,5 +12,16 @@ class LoadProvider with ChangeNotifier {
     notifyListeners(); 
   }
 
+  // DRAWER MENU
+  
+ Widget _pagina = const HomePage(); 
+
+ Widget get pagina => _pagina; 
+
+set pagina (Widget wid) {
+_pagina = wid; 
+notifyListeners(); 
+
+}
 
 }

@@ -20,11 +20,19 @@ class _InicioState extends State<Inicio> {
   }
 
   Future<void> navegar() async  {
-      final authToken = Provider.of<AuthServices>(context, listen: false);
+    
+    final authToken = Provider.of<AuthServices>(context, listen: false);
+    final userProv = Provider.of<UsersServices>(context, listen: false); 
+    final textsProv = Provider.of<TextsServices>(context, listen: false);
+
+      textsProv.textos=[]; 
+      await userProv.traerUsuarios(); 
+      textsProv.usuarios= userProv.allUsers; 
+      await textsProv.traerTextos();
 
       await Future.delayed(const Duration(seconds: 3));
+
       var token = await authToken.readToken();
- 
 
       if (token == '' || token.isEmpty) {
 
@@ -36,7 +44,7 @@ class _InicioState extends State<Inicio> {
 
         print(token); 
 
-       email = await authToken.recuperarDatos(token) ?? 'error'; 
+          email = await authToken.recuperarDatos(token) ?? 'invalido'; 
 
         if (email == 'invalido') {
 
@@ -44,25 +52,17 @@ class _InicioState extends State<Inicio> {
            Navigator.pushReplacementNamed(context, 'login'); 
 
         } else {
-           final userProv =  Provider.of<UsersServices>(context, listen: false); 
 
-           userProv.userLogeado(email); 
-           print(userProv.userLog?.alias ?? 'sin userLog'); 
-
+          userProv.userLogeado(email);
           Navigator.pushReplacementNamed(context, 'home');
+          
         }
        
       } 
     }
- 
 
   @override
   Widget build(BuildContext context) {
-
-    final userProv = Provider.of<UsersServices>(context); 
-    
-    userProv.traerUsuarios(); 
-    
      return const Scaffold(
       body: LoadWave()); 
 

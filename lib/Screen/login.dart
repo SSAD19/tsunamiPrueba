@@ -4,6 +4,7 @@ import 'package:tsunami_stef/Services/services.dart';
 import 'package:tsunami_stef/Theme/themelight.dart';
 
 
+//TODO:  REVISAR QUE EL ALIAS NO ESTÉ REPETIDO
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -92,10 +93,11 @@ class _CardContainer extends StatelessWidget {
                   Usuario newUser =  Usuario(alias: loginProv.alias! , correo:loginProv.correo!, activo: true); 
                   
                   final userProv = Provider.of<UsersServices>(context, listen: false);
-
+                  
                   bool alta = await userProv.altaUsuario(newUser); 
-
+                  
                   alta ? userProv.userLogeado(loginProv.correo!) : null; 
+
                   alta ?  Navigator.pushReplacementNamed(context, 'home')
                   :  ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Error al generar el alta del usuario')),        
@@ -111,10 +113,11 @@ class _CardContainer extends StatelessWidget {
           
           },
           child: const Text('Registrarse'),)
-          //INICIO SESION BOTON 
+         
+         //INICIO SESION BOTON 
           :MaterialButton(onPressed: () async {
-            if(!loginProv.validarForm()) 
-            { 
+           if(!loginProv.validarForm()) 
+           { 
                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Alguno de los datos es incorrecto, por favor, revise.')),);
               return; 
            } 
@@ -122,15 +125,17 @@ class _CardContainer extends StatelessWidget {
           String? error = await  authProv.iniciarSesion(loginProv.correo!, loginProv.password!); 
        
           if ( error == null ) {
-                  //TODO: cargar textos y asignar cual es el user ??
 
-                  final userProv = Provider.of<UsersServices>(context, listen: false);
-                  userProv.userLogeado(loginProv.correo!);              
-                  Navigator.pushReplacementNamed(context, 'home');
-                  loginProv.limpiarInputs(); 
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('No se puede ingresar. $error')));   
+            final userProv = Provider.of<UsersServices>(context, listen: false);
+
+            userProv.userLogeado(loginProv.correo!); 
+           
+           Navigator.pushReplacementNamed(context, 'home');
+            loginProv.limpiarInputs(); 
+
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No se puede ingresar. $error')));   
           }}, 
           child: const Text('Ingresar'),), 
         ],

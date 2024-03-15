@@ -6,24 +6,25 @@ import 'package:tsunami_stef/Services/services.dart';
 import 'package:tsunami_stef/Theme/themelight.dart';
 import 'package:tsunami_stef/widgets/widgets.dart';
 
-class HomeScreen extends StatefulWidget {
+
+
+
+
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
+    
+    GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>(); 
+    final page = Provider.of<LoadProvider>(context); 
 
+    final userProv = Provider.of<UsersServices>(context); 
+    final textProv = Provider.of<TextsServices>(context); 
 
-    final userProv = Provider.of<UsersServices>(context);
-
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    Widget pagina =  const HomePage(); 
-
-    return SafeArea(
+    textProv.textUserLog(userProv.userLog!.idUser!);
+   
+    return  SafeArea(
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
@@ -70,9 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.home),
                 title:const Text('Home'),
                  onTap: () {
-                  pagina = const HomePage();
-      
-                  setState(() { }); 
+                  page.pagina = const HomePage();                  
                   Navigator.pop(context);
                  }
               ),
@@ -80,9 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.people),
                 title:const Text('Mis Textos'),
                  onTap: () {
-                  pagina = const UserTextPage();
-      
-                  setState(() { }); 
+                  page.pagina = const UserTextPage();                  
                   Navigator.pop(context);
                  }
               ),
@@ -90,8 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.settings),
                 title:const Text('Perfil'),
                onTap: () {
-                  pagina =  const UserTextPage();
-                  setState(() { }); 
+                  page.pagina =   PerfilPages(userLog: userProv);                  
                   Navigator.pop(context);
                  }
                 ),
@@ -101,24 +97,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   final authProv = Provider.of<AuthServices>(context, listen:false); 
                   authProv.logOut(); 
+                  textProv.textos = []; 
                   Navigator.pushReplacementNamed(context, 'inicio');
                   
-                  setState(() { }); 
                   },
                  ),
           ]),
           
         ),
       
-        body: pagina,
+        body: Container(
+          child: page.pagina,
+        ),
         
-        floatingActionButtonLocation:  FloatingActionButtonLocation.endDocked,
+        floatingActionButtonLocation:  FloatingActionButtonLocation.endContained,
         floatingActionButton: const AddText(),),
     );
-    
   }
 }
-
 class AddText extends StatelessWidget {
   const AddText({
     super.key,
@@ -159,7 +155,8 @@ Future<void> _showMyDialog(BuildContext context) async {
     barrierDismissible: false, 
 
     builder: (BuildContext context) {
-      return NewText();
+
+      return const NewText();
     },
   );
 }

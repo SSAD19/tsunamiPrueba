@@ -14,7 +14,7 @@ class Usuario{
 Usuario({
   required this.activo,
   required this.alias,
-   this.idUser,
+  this.idUser,
   required this.correo, 
   this.userLog,
   this.name

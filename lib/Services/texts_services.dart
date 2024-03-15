@@ -12,27 +12,14 @@ class TextsServices with ChangeNotifier {
   final String _baseUrl = 'tsunami-app-41226-default-rtdb.firebaseio.com';
 
   List<Texts> textos =[]; 
-  List<Usuario> usuarios =[]; 
- 
+  List<Usuario> usuarios = []; 
 
-  TextsServices(); 
+  TextsServices() ;
 
-  //revisar
+Future<bool> traerTextos ()  async {
 
-Future recuperarTodos (int id) async {
-      await traerTextos(id); 
-      await aliasTextos(); 
-      notifyListeners(); 
+try { 
 
-}
-
-void limpiarTextos(){
- textos=[]; 
-}
-
-Future<void> traerTextos (int id)  async {
-
-    print('entrando a recuperar');  
     final url = Uri.https(_baseUrl,'Textos.json'); 
     final texts = await http.get(url);
 
@@ -42,18 +29,24 @@ Future<void> traerTextos (int id)  async {
       
       final textMap = Texts.fromJson(value);
         textMap.name = key; 
-        textMap.idUser != id
-        ? textMap.userAct= false
-        : textMap.userAct= true;
-
+        textMap.userAct = false;
         textos.add(textMap);
     });
+
+    asignarAlias();
+    return true; 
+
+     } catch (e) {
+
+      print(e);
+      return false; 
+     }
+  
 
 }
 
 // para llenar los usuarios 
-Future aliasTextos() async {
-print('entrando en ciclo alias');
+asignarAlias() {
 
     if (usuarios.isNotEmpty) {
       for (final texto in textos) {
@@ -63,16 +56,38 @@ print('entrando en ciclo alias');
           }
         }
       }
-
-   print('saliendo en cicloa alias'); 
 }
 
+}
+
+
+//errpr acà, está trayendo  4 
+textUserLog(int id) {
+
+   
+ for (int i = 0; i<textos.length; i++){
+    if(textos[i].idUser == id){
+      textos[i].userAct = true;
+  } 
+ }
+
+}
+
+
+//SIN CORREGIR - APLICAR 
  
-Future<void> enviarTexto(Texts texto) async {
+Future<void> enviarTexto(Texts texto, Usuario user) async {
+
 
     final url = Uri.https(_baseUrl, 'Textos.json');
     try {
       await http.post(url, body: json.encode(texto.toJson()),);
+
+      texto.userAct = true; 
+      texto.user = user; 
+      textos.add(texto);
+
+      notifyListeners(); 
 
     } catch (e) {
       print('Se produjo un error. $e');
@@ -80,7 +95,7 @@ Future<void> enviarTexto(Texts texto) async {
   }
 
 //asignar maxID 
-  Future<int> BuscarIdMax () async {
+  Future<int> buscarIdMax () async {
     
     int maxIdTexto =0 ; 
     final url = Uri.https(_baseUrl, 'Textos.json');
@@ -96,31 +111,24 @@ Future<void> enviarTexto(Texts texto) async {
           maxIdTexto = idTexto;
         }
       });
-      print(maxIdTexto);
       return maxIdTexto + 1;
 
     } else {
-      print('No se pudo obtener el ID máximo.');
       return -1;
     }
     
   }
      
-     
-  // actualizar solo textosUsers 
 
-     
-    //TODO: Delete del idTexto seleccionado
 Future<void> borrarTexto (String name, int id) async {
 
     print('entrando a borrar');  
     final url = Uri.https(_baseUrl,'Textos/${name}.json'); 
     await http.delete(url);
-    recuperarTodos(id); 
 
+    textos.removeWhere((element)=>  element.name == name); 
+    notifyListeners(); 
 }
-
-// put para actualizar contador  
 
 
 Future<void> masUnoCont (Texts texto) async{
@@ -138,4 +146,3 @@ Future<void> masUnoCont (Texts texto) async{
     notifyListeners(); 
 }
 } 
-}
