@@ -73,8 +73,6 @@ textUserLog(int id) {
 
 }
 
-
-//SIN CORREGIR - APLICAR 
  
 Future<void> enviarTexto(Texts texto, Usuario user) async {
 
@@ -120,6 +118,7 @@ Future<void> enviarTexto(Texts texto, Usuario user) async {
   }
      
 
+// probar 
 Future<void> borrarTexto (String name, int id) async {
 
     print('entrando a borrar');  

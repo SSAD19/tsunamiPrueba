@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tsunami_stef/Models/models.dart';
+import 'package:tsunami_stef/Services/services.dart';
 
 
 class CardTextos extends StatelessWidget {
@@ -20,8 +21,11 @@ class CardTextos extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              IconButton(onPressed: (){
-                //TODO: FUNCIONALIDAD ME GUSTA 
+              IconButton(onPressed: () async {
+                final textProv = Provider.of<TextsServices>(context, listen: false); 
+                  userAct
+                  ? null
+                  : await textProv.masUnoCont(texto);
               },
                icon: texto.contador != 0  
                ? Icon(CupertinoIcons.heart_solid)
@@ -32,7 +36,9 @@ class CardTextos extends StatelessWidget {
                userAct 
                ? TextButton(
                   onPressed: () {
-                  // TODO : BORRAR
+
+                  final textProv = Provider.of<TextsServices>(context, listen: false); 
+                        textProv.borrarTexto(texto.name!, texto.idUser);
 
                   },  
                   child:const  Text('borrar'))
